@@ -7,8 +7,8 @@
 int height(AVLNode *node){
     int heightLeft, heightRight;
     
-    //Recursively move down on both right and left subtrees, adding the number
-    //nodes on the way, and selecting the maximum one at everynode.
+    //Recursively move down on both right and left subtrees, adding the number of
+    //nodes on the way, and selecting the maximum one at every node.
     
     //Base case
     if(!node)
@@ -30,9 +30,9 @@ int getBalance(AVLNode *node){
 AVLNode* rightRotate(AVLNode *x){
     AVLNode *y,*z;
     
-    //      X               Y
-    //   Y         =>          X
-    //     Z                  Z
+    //      X                Y
+    //   Y     b     =>   a     X
+    // a   Z                   Z b
     
     y = x->left;    //Y is the left subtree of X
     z = y->right;   //Z is the right subtree of Y
@@ -47,9 +47,9 @@ AVLNode* rightRotate(AVLNode *x){
 AVLNode* leftRotate(AVLNode *x){
     AVLNode *y,*z;
     
-    //   X                 Y
-    //a     Y     =>    X     b
-    //     Z b        a   Z
+    //    X                Y
+    // a     Y     =>    X   b
+    //      Z b        a   Z
     
     y = x->right;   //Y is the right subtree of X
     z = y->left;    //Z is the left subtree of Y
