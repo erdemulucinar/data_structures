@@ -61,7 +61,7 @@ AVLNode* leftRotate(AVLNode *x){
     return y;
 }
 
-AVLNode* insertNode(AVLNode *node, void *key, copyFunction copy, compareFunction compare){
+AVLNode* insertNode(AVLNode *node, void *key, copyFunction copy, compareFunction compare, int *success){
     //Recursively move down the tree to find the leaf to add the key. When it is
     //found, copy it there and start moving upwards, while checking for the balance
     //of the tree and when it is violated, fix the unbalance.
@@ -80,11 +80,13 @@ AVLNode* insertNode(AVLNode *node, void *key, copyFunction copy, compareFunction
     //Adding the node
     compareRes = compare(key,node->key);
     if(compareRes > 0) //Key is bigger
-        node->right = insertNode(node->right, key, copy, compare);
+        node->right = insertNode(node->right, key, copy, compare, success);
     else if(compareRes < 0) //Key is smaller
-        node->left = insertNode(node->left, key, copy, compare);
-    else //Key already exists and it is this node thus just return it.
+        node->left = insertNode(node->left, key, copy, compare, success);
+    else{ //Key already exists and it is this node thus just return it.
+        *success = 0;
         return node;
+    }
     
     //After addition is complete, now move upwards and balance the tree
     balance = getBalance(node);
@@ -92,7 +94,7 @@ AVLNode* insertNode(AVLNode *node, void *key, copyFunction copy, compareFunction
         balanceChild = getBalance(node->left);
         //If left child's left is heavy a simple right rotation is enough
         //Else, there is a zig-zag pattern and a left->right rotate is needed
-        if(balance > 0) //left and left heavy
+        if(balanceChild > 0) //left and left heavy
             return rightRotate(node);
         else { //left and right heavy (zigzag)
             node->left = leftRotate(node->left);
@@ -139,14 +141,14 @@ void printNode(AVLNode *node, printFunction print, int tablvl){
     printNode(node->left, print, tablvl+1);
 }
 
-void sortPrint(AVLNode *node, printFunction print){
+void sortList(AVLNode *node, int *i, void **sortedList){
     if(!node)
         return;
     
-    sortPrint(node->left, print);
-    print(node->key);
-    printf(" ");
-    sortPrint(node->right, print);
+    sortList(node->left, i, sortedList);
+    sortedList[*i] = node->key;
+    *i = *i + 1;
+    sortList(node->right, i, sortedList);
 }
 
 void balanceCheck(AVLNode *node, int* maxDev){
@@ -178,20 +180,25 @@ AVLTree* createAVL(copyFunction copy, deleteFunction del, compareFunction compar
     tree->delFcn = del;
     tree->compFcn = compare;
     tree->head = 0;
+    tree->len = 0;
     
     return tree;
 }
 
 AVLTree* insertAVL(AVLTree *tree, void *key){
     AVLNode *head;
+    int success;
     
     //Null pointer check
     if(!tree)
         return 0;
     
     //Insertion
-    head = insertNode(tree->head, key, tree->copyFcn, tree->compFcn);
+    success = 1;
+    head = insertNode(tree->head, key, tree->copyFcn, tree->compFcn, &success);
     tree->head = head;
+    if(success)
+        tree->len = tree->len+1;
     return tree;
 }
 
@@ -224,10 +231,22 @@ void printAVL(AVLTree *tree, printFunction print){
     printNode(tree->head,print,0);
 }
 
-void reportAVL(AVLTree *tree, printFunction print){
-    int maxDev = 0;
-    sortPrint(tree->head, print);
-    printf("\n");
-    balanceCheck(tree->head, &maxDev);
-    printf("Maximum deviation from balance: %d\n",maxDev);
+void reportAVL(AVLTree *tree, int *isTreeSorted, int *maxDev){
+    int i, compRes;
+    void **sortedList;
+    
+    *maxDev = 0;
+    balanceCheck(tree->head, maxDev);
+    
+    i = 0;
+    sortedList = malloc(tree->len * sizeof(void*));
+    sortList(tree->head, &i, sortedList);
+    *isTreeSorted = 1;
+    for(i = 0; i < tree->len-1; i++){
+        compRes = tree->compFcn(sortedList[i],sortedList[i+1]);
+        if(compRes >= 0){
+            *isTreeSorted = 0;
+            i = tree->len;
+        }
+    }
 }
