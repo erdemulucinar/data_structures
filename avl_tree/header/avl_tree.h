@@ -33,6 +33,7 @@ typedef struct AVLTree{
     deleteFunction delFcn;
     compareFunction compFcn;
     AVLNode *head;
+    int len;
 } AVLTree;
 
 //Operations on tree
@@ -66,8 +67,9 @@ void flushAVL(AVLTree * tree);
 //              e
 //              d
 void printAVL(AVLTree *tree, printFunction print);
-//Report scans all the nodes in the tree and prints the maximum deviation from the balance
-//and prints the sorted list collected from the tree too.
-void reportAVL(AVLTree *tree, printFunction print);
+//Report scans all the nodes in the tree and reports the maximum deviation from the
+//balance with maxDeviation parameter and reports if the nodes in the tree are placed
+//correctly, i.e. if the tree is sorted correctly.
+void reportAVL(AVLTree *tree, int *isTreeSorted, int *maxDeviation);
 
 #endif
