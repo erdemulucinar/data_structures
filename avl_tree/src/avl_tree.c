@@ -114,7 +114,7 @@ AVLNode* insertNode(AVLNode *node, void *key, copyFunction copy, compareFunction
         return node;
 }
 
-AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunction compare, int *success){
+AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunction compare, copyFunction copy, int *success){
     //  Recursively move down the tree to find the leaf to remove. When it is found,
     //remove and start moving upwards, while checking for the balance of the tree
     //and when it is violated, fix the unbalance.
@@ -130,9 +130,9 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
     //Searching the node
     compareRes = compare(key,node->key);
     if(compareRes > 0) //Key is bigger
-        node->right = removeNode(node->right, key, del, compare, success);
+        node->right = removeNode(node->right, key, del, compare, copy, success);
     else if(compareRes < 0) //Key is smaller
-        node->left = removeNode(node->left, key, del, compare, success);
+        node->left = removeNode(node->left, key, del, compare, copy, success);
     else{ //Key is found. Delete and move upwards now.
         *success = 1;
         
@@ -144,12 +144,11 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
                 temp = temp->left;
             
             //Copy the key of the found node.
-            node->key = temp->key;
+            del(node->key);
+            node->key = copy(temp->key);
             //Remove the found node, now the problem is deletion of a node with
             //either no sub-trees or only one subtree.
-            node->right = removeNode(node->right, node->key, del, compare, success);
-            
-            
+            node->right = removeNode(node->right, temp->key, del, compare, copy, success);
         } else if(node->left || node->right){ //One sub-tree.
             //Since the tree is balanced, for the case with one sub-tree, there
             //cannot be any sub-trees connected to the single subtree of the node.
@@ -159,12 +158,15 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
                 temp = node->right;
             
             //Copy the contents of the sub-tree
+            del(node->key);
             node->right = temp->right;
             node->left = temp->left;
-            node->key = temp->key;
+            node->key = copy(temp->key);
             //Delete the first copy of the sub-tree
+            del(temp->key);
             free(temp);
         } else{ //No sub-trees
+            del(node->key);
             free(node);
             return 0;
         }
@@ -294,7 +296,7 @@ AVLTree* removeAVL(AVLTree *tree, void *key){
     
     //Deletion
     success = 1;
-    head = removeNode(tree->head, key, tree->delFcn, tree->compFcn, &success);
+    head = removeNode(tree->head, key, tree->delFcn, tree->compFcn, tree->copyFcn, &success);
     tree->head = head;
     if(success)
         tree->len = tree->len-1;
@@ -348,4 +350,5 @@ void reportAVL(AVLTree *tree, int *isTreeSorted, int *maxDev){
             i = tree->len;
         }
     }
+    free(sortedList);
 }
