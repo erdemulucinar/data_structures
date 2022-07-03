@@ -141,7 +141,7 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
             //Get the inorder successor of the node to be deleted from the right
             //sub-tree.
             temp = node->right;
-            while(temp)
+            while(temp->left)
                 temp = temp->left;
             
             //Copy the key of the found node.
