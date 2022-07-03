@@ -174,6 +174,8 @@ int main(int argc, const char * argv[]) {
     int isSortedAccDeletion, maxDevAccDeletion, treeLenAccDeletion;
     int i;
     
+    srand((unsigned)(time(0)));
+    
     repeat_cnt = 100;
     len = 1000;
     isSortedAccInsertion = 1;
@@ -223,16 +225,5 @@ int main(int argc, const char * argv[]) {
     else
         printf("DELETION LENGTH CHECK FAILURE: List's length is not correct.\n");
     
-    /*AVLTree *tree;
-    
-    for(int i=0; i>=0; i++){
-        tree = createAVL(&copyInt, &delInt, &compInt);
-        for(int i = 0; i < 10000; i++)
-            insertAVL(tree, (void*) &i);
-        
-        for(int i = 0; i < 10000; i++)
-            removeAVL(tree, (void*) &i);
-        free(tree);
-    }*/
     return 0;
 }
