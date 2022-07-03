@@ -303,7 +303,7 @@ AVLTree* removeAVL(AVLTree *tree, void *key){
     return tree;
 }
 
-void* searchAvl(AVLTree* tree, void *key){
+void* searchAVL(AVLTree* tree, void *key){
     AVLNode *currNode;
     int compareRes;
     
