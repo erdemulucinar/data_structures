@@ -114,6 +114,89 @@ AVLNode* insertNode(AVLNode *node, void *key, copyFunction copy, compareFunction
         return node;
 }
 
+AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunction compare, int *success){
+    //  Recursively move down the tree to find the leaf to remove. When it is found,
+    //remove and start moving upwards, while checking for the balance of the tree
+    //and when it is violated, fix the unbalance.
+    int compareRes, balance, balanceChild;
+    AVLNode *temp;
+    
+    //Base case
+    if(!node){ //Leaf is not found
+        *success = 0;
+        return 0;
+    }
+    
+    //Searching the node
+    compareRes = compare(key,node->key);
+    if(compareRes > 0) //Key is bigger
+        node->right = removeNode(node->right, key, del, compare, success);
+    else if(compareRes < 0) //Key is smaller
+        node->left = removeNode(node->left, key, del, compare, success);
+    else{ //Key is found. Delete and move upwards now.
+        del(node->key); //Application specific data is deleted.
+        *success = 1;
+        
+        if(node->left && node->right){ //Two sub-trees
+            //Get the inorder successor of the node to be deleted from the right
+            //sub-tree.
+            temp = node->right;
+            while(temp)
+                temp = temp->left;
+            
+            //Copy the key of the found node.
+            node->key = temp->key;
+            //Remove the found node, now the problem is deletion of a node with
+            //either no sub-trees or only one subtree.
+            node->right = removeNode(node->right, node->key, del, compare, success);
+            
+            
+        } else if(node->left || node->right){ //One sub-tree.
+            //Since the tree is balanced, for the case with one sub-tree, there
+            //cannot be any sub-trees connected to the single subtree of the node.
+            if(node->left)
+                temp = node->left;
+            else
+                temp = node->right;
+            
+            //Copy the contents of the sub-tree
+            node->right = temp->right;
+            node->left = temp->left;
+            node->key = temp->key;
+            //Delete the first copy of the sub-tree
+            free(temp);
+        } else{ //No sub-trees
+            free(node);
+            return 0;
+        }
+    }
+    
+    //After addition is complete, now move upwards and balance the tree
+    balance = getBalance(node);
+    if(balance > 1 && *success){ //Left is heavy need to rotate right
+        balanceChild = getBalance(node->left);
+        //If left child's left is heavy a simple right rotation is enough
+        //Else, there is a zig-zag pattern and a left->right rotate is needed
+        if(balanceChild > 0) //left and left heavy
+            return rightRotate(node);
+        else { //left and right heavy (zigzag)
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
+        }
+    } else if(balance < -1 && *success){ //Right is heavy need to rotate left
+        balanceChild = getBalance(node->right);
+        //If right child's right is heavy, a simple left rotation is enough.
+        //Else, there is a zigzag pattern and a right->left rotation is needed
+        if(balanceChild < 0) //Right and right heavy
+            return leftRotate(node);
+        else { //Right and left heavy (zigzag)
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
+        }
+    } else //Node in inspection is already balanced.
+        return node;
+}
+
 void flushNode(AVLNode *node, deleteFunction delete){
     if(!node)
         return;
@@ -199,6 +282,23 @@ AVLTree* insertAVL(AVLTree *tree, void *key){
     tree->head = head;
     if(success)
         tree->len = tree->len+1;
+    return tree;
+}
+
+AVLTree* removeAVL(AVLTree *tree, void *key){
+    AVLNode *head;
+    int success;
+    
+    //Null pointer check
+    if(!tree)
+        return 0;
+    
+    //Deletion
+    success = 1;
+    head = removeNode(tree->head, key, tree->delFcn, tree->compFcn, &success);
+    tree->head = head;
+    if(success)
+        tree->len = tree->len-1;
     return tree;
 }
 
