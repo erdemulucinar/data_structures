@@ -46,7 +46,9 @@ int removeAVL(AVLTree *tree, void *key);
 //BST search function.
 void* searchAVL(AVLTree *tree, void *key);
 //A function to free all the heap memory used by the tree in parameter.
-void flushAVL(AVLTree * tree);
+void flushAVL(AVLTree *tree);
+//A function to list the keys of the tree in an array.
+void listAVL(AVLTree *tree, void **list);
 
 //Debug functions
 //  Prints the whole tree, with the head node having 0 tabs before, and i'th level nodes

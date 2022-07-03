@@ -209,6 +209,16 @@ void flushNode(AVLNode *node, deleteFunction delete){
     free(node);
 }
 
+void sortList(AVLNode *node, int *i, void **sortedList){
+    if(!node)
+        return;
+    
+    sortList(node->left, i, sortedList);
+    sortedList[*i] = node->key;
+    *i = *i + 1;
+    sortList(node->right, i, sortedList);
+}
+
 //Debug Functions
 void printNode(AVLNode *node, printFunction print, int tablvl){
     int i;
@@ -223,16 +233,6 @@ void printNode(AVLNode *node, printFunction print, int tablvl){
     printf("\n");
     printNode(node->right, print, tablvl+1);
     printNode(node->left, print, tablvl+1);
-}
-
-void sortList(AVLNode *node, int *i, void **sortedList){
-    if(!node)
-        return;
-    
-    sortList(node->left, i, sortedList);
-    sortedList[*i] = node->key;
-    *i = *i + 1;
-    sortList(node->right, i, sortedList);
 }
 
 void balanceCheck(AVLNode *node, int* maxDev){
@@ -327,6 +327,15 @@ void* searchAVL(AVLTree* tree, void *key){
 void flushAVL(AVLTree *tree){
     flushNode(tree->head,tree->delFcn);
 }
+
+void listAVL(AVLTree *tree, void **list){
+    int i;
+    
+    i = 0;
+    sortList(tree->head, &i, list);
+}
+
+//Debug Functions
 
 void printAVL(AVLTree *tree, printFunction print){
     printNode(tree->head,print,0);
