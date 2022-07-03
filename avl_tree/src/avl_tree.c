@@ -134,7 +134,6 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
     else if(compareRes < 0) //Key is smaller
         node->left = removeNode(node->left, key, del, compare, success);
     else{ //Key is found. Delete and move upwards now.
-        del(node->key); //Application specific data is deleted.
         *success = 1;
         
         if(node->left && node->right){ //Two sub-trees
@@ -177,7 +176,7 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
         balanceChild = getBalance(node->left);
         //If left child's left is heavy a simple right rotation is enough
         //Else, there is a zig-zag pattern and a left->right rotate is needed
-        if(balanceChild > 0) //left and left heavy
+        if(balanceChild >= 0) //left and left heavy
             return rightRotate(node);
         else { //left and right heavy (zigzag)
             node->left = leftRotate(node->left);
@@ -187,7 +186,7 @@ AVLNode* removeNode(AVLNode *node, void *key, deleteFunction del, compareFunctio
         balanceChild = getBalance(node->right);
         //If right child's right is heavy, a simple left rotation is enough.
         //Else, there is a zigzag pattern and a right->left rotation is needed
-        if(balanceChild < 0) //Right and right heavy
+        if(balanceChild <= 0) //Right and right heavy
             return leftRotate(node);
         else { //Right and left heavy (zigzag)
             node->right = rightRotate(node->right);
