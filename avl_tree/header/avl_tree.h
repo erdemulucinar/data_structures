@@ -40,9 +40,9 @@ typedef struct AVLTree{
 //Constructor of AVL.
 AVLTree* createAVL(copyFunction copy, deleteFunction del, compareFunction compare);
 //Key insertion function.
-AVLTree* insertAVL(AVLTree *tree, void *key);
+int insertAVL(AVLTree *tree, void *key);
 //Key removal function.
-AVLTree* removeAVL(AVLTree *tree, void *key);
+int removeAVL(AVLTree *tree, void *key);
 //BST search function.
 void* searchAVL(AVLTree *tree, void *key);
 //A function to free all the heap memory used by the tree in parameter.

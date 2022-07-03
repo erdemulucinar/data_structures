@@ -269,7 +269,7 @@ AVLTree* createAVL(copyFunction copy, deleteFunction del, compareFunction compar
     return tree;
 }
 
-AVLTree* insertAVL(AVLTree *tree, void *key){
+int insertAVL(AVLTree *tree, void *key){
     AVLNode *head;
     int success;
     
@@ -283,10 +283,10 @@ AVLTree* insertAVL(AVLTree *tree, void *key){
     tree->head = head;
     if(success)
         tree->len = tree->len+1;
-    return tree;
+    return success;
 }
 
-AVLTree* removeAVL(AVLTree *tree, void *key){
+int removeAVL(AVLTree *tree, void *key){
     AVLNode *head;
     int success;
     
@@ -300,7 +300,7 @@ AVLTree* removeAVL(AVLTree *tree, void *key){
     tree->head = head;
     if(success)
         tree->len = tree->len-1;
-    return tree;
+    return success;
 }
 
 void* searchAVL(AVLTree* tree, void *key){
