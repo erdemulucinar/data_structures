@@ -166,7 +166,7 @@ void deletionTest(AVLTree* tree, int len, int *isSortedAcc, int *maxDevAcc, int 
     free(tree);
 }
 
-int avlTest(void) {
+int avlTest(int repeat_cnt, int len) {
     AVLTree *tree;
     int repeat_cnt, len;
     int isSortedAcc, maxDevAcc, treeLenAcc;
@@ -176,8 +176,6 @@ int avlTest(void) {
     
     srand((unsigned)(time(0)));
     
-    repeat_cnt = 100;
-    len = 1000;
     isSortedAccInsertion = 1;
     maxDevAccInsertion = 0;
     treeLenAccInsertion = 1;
