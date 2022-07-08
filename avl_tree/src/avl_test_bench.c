@@ -168,7 +168,6 @@ void deletionTest(AVLTree* tree, int len, int *isSortedAcc, int *maxDevAcc, int 
 
 int avlTest(int repeat_cnt, int len) {
     AVLTree *tree;
-    int repeat_cnt, len;
     int isSortedAcc, maxDevAcc, treeLenAcc;
     int isSortedAccInsertion, maxDevAccInsertion, treeLenAccInsertion;
     int isSortedAccDeletion, maxDevAccDeletion, treeLenAccDeletion;
