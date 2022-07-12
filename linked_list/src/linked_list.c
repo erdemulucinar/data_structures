@@ -185,6 +185,8 @@ LinkedList* copyLinkedList(LinkedList *list){
         appendLinkedList(newList, (void*) node->key);
         node = node->next;
     }
+    
+    return newList;
 }
 
 //Debug functions
