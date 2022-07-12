@@ -168,6 +168,25 @@ void flushLinkedList(LinkedList *list){
     free(list);
 }
 
+LinkedList* copyLinkedList(LinkedList *list){
+    LinkedList *newList;
+    LinkedListNode *node;
+    
+    newList = malloc(sizeof(LinkedList));
+    newList->copyFcn = list->copyFcn;
+    newList->delFcn = list->delFcn;
+    newList->compFcn = list->compFcn;
+    newList->len = 0;
+    newList->head = 0;
+    newList->isUnique = list->isUnique;
+    
+    node = list->head;
+    while(node){
+        appendLinkedList(newList, (void*) node->key);
+        node = node->next;
+    }
+}
+
 //Debug functions
 void printLinkedList(LinkedList *list, printFunction print){
     LinkedListNode *currNode;

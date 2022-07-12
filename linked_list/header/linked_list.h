@@ -49,6 +49,8 @@ int removeLinkedList(LinkedList *list, void *key);
 void* searchLinkedList(LinkedList *list, void *key);
 //A function to empty a list
 void flushLinkedList(LinkedList *list);
+//A function to copy all the contents of a linked list
+LinkedList* copyLinkedList(LinkedList *list);
 
 //Debug functions
 void printLinkedList(LinkedList *list, printFunction print);
