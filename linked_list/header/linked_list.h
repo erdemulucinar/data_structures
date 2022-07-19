@@ -33,12 +33,11 @@ typedef struct LinkedList{
     compareFunction compFcn;
     LinkedListNode *head;
     int len;
-    int isUnique; //When 1, there will be no copies of values in the list.
 } LinkedList;
 
 //Operations on linked list
 //Constructor of the list.
-LinkedList* createLinkedList(copyFunction copy, deleteFunction del, compareFunction compare, int isUnique);
+LinkedList* createLinkedList(copyFunction copy, deleteFunction del, compareFunction compare);
 //Insertion function to the beginning of the list
 int pushLinkedList(LinkedList *list, void *key);
 //Insertion function to the end of the list

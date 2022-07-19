@@ -4,7 +4,7 @@
 //-----------------------------Interface Functions-------------------------------
 //-------------------------------------------------------------------------------
 
-LinkedList* createLinkedList(copyFunction copy, deleteFunction del, compareFunction compare, int isUnique){
+LinkedList* createLinkedList(copyFunction copy, deleteFunction del, compareFunction compare){
     LinkedList *list;
     
     list = malloc(sizeof(LinkedList));
@@ -13,36 +13,23 @@ LinkedList* createLinkedList(copyFunction copy, deleteFunction del, compareFunct
     list->compFcn = compare;
     list->len = 0;
     list->head = 0;
-    list->isUnique = isUnique;
     
     return list;
 }
 
 int pushLinkedList(LinkedList *list, void *key){
     LinkedListNode *newNode;
-    void* searchRes;
     
     //Null list check
     if(!list){
         return 0;
     }
     
-    //Searching the list for unique option.
-    if(list->isUnique){
-        searchRes = searchLinkedList(list, key);
-    } else{
-        searchRes = 0;
-    }
-    
     //Adding the node as the head
-    if(searchRes){
-        return 0;
-    } else{
-        newNode = malloc(sizeof(LinkedListNode));
-        newNode->key = list->copyFcn(key);
-        newNode->next = list->head;
-        list->head = newNode;
-    }
+    newNode = malloc(sizeof(LinkedListNode));
+    newNode->key = list->copyFcn(key);
+    newNode->next = list->head;
+    list->head = newNode;
     
     list->len = list->len + 1;
     return 1;
@@ -50,31 +37,19 @@ int pushLinkedList(LinkedList *list, void *key){
 
 int appendLinkedList(LinkedList *list, void *key){
     LinkedListNode *newNode, **currentNode;
-    int compRes;
     
     //Null list check
     if(!list){
         return 0;
     }
     
-    //Go to the end of the list while checking the uniqueness when it is enabled.
     //To eliminate the need to check for empty list, pointer to pointer reference
     //is used. This way, at any time the current node is accessed through the
-    //previous node's next pointer. Thus updating the value of the pointer to
-    //pointer, previous node's next is updated.
+    //previous node's next pointer. Thus updating the value of the pointer results
+    //in updating the previous node's next pointer.
     currentNode = &(list->head);
     while(*currentNode){
-        if(list->isUnique){
-            compRes = list->compFcn((*currentNode)->key,key);
-        } else{
-            compRes = 1;
-        }
-        
-        if(compRes){
-            currentNode = &((*currentNode)->next);
-        } else{
-            return 0;
-        }
+        currentNode = &((*currentNode)->next);
     }
     
     //Create the new node
@@ -90,7 +65,7 @@ int appendLinkedList(LinkedList *list, void *key){
 
 int removeLinkedList(LinkedList *list, void *key){
     LinkedListNode **currNode, *tmp;
-    int compRes, keyFound;
+    int compRes;
     
     //Null list check
     if(!list){
@@ -99,35 +74,29 @@ int removeLinkedList(LinkedList *list, void *key){
     
     //Search for the key iterating over the previous nodes to make the remove
     //process easier. At any time, the compared node is viewed from the previous
-    //node's next pointer. For the head, it is the next pointer of list.
-    keyFound = 0;
+    //node's next pointer. For the head, it is the next pointer of list. Thus there
+    //no need to keep track of the previous node.
     currNode = &(list->head);
     while(*currNode){
         compRes = list->compFcn((*currNode)->key,key);
         if(!compRes){ //Key is found
-            //Copy the next pointer of the removed node
+            //Copy the next pointer of the node to be removed
             tmp = (*currNode)->next;
             //Free the removed node's data
             list->delFcn((*currNode)->key);
             free(*currNode);
-            //Set the next pointer of the removed node's previous node to the
-            //next pointer of the removed node.
+            //Set the next pointer of the previous node to the node following the
+            //removed node.
             *currNode = tmp;
             list->len = list->len - 1;
-            if(list->isUnique){
-                return 1;
-            } else{ //When the list is not unique, all copies are deleted.
-                if(*currNode)
-                    keyFound = 1;
-                else
-                    return 1;
-            }
+            return 1;
         } else{
             currNode = &((*currNode)->next);
         }
     }
     
-    return keyFound;
+    //Node to be deleted was not foundç
+    return 0;
 }
 
 void* searchLinkedList(LinkedList *list, void *key){
@@ -178,7 +147,6 @@ LinkedList* copyLinkedList(LinkedList *list){
     newList->compFcn = list->compFcn;
     newList->len = 0;
     newList->head = 0;
-    newList->isUnique = list->isUnique;
     
     node = list->head;
     while(node){

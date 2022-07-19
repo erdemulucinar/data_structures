@@ -3,52 +3,55 @@
 #include "linked_list.h"
 
 //Test bench functions
-void insertRemoveTestLinkedList(int len, int isUnique, int *testRes){
+void insertRemoveTestLinkedList(int len, int *testRes){
     LinkedList *list;
+    void *searchRes;
     int *vals, i, opRes;
     
     *testRes = 1;
     opRes = 0;
     vals = randList(len);
-    list = createLinkedList(&copyInt, &delInt, &compInt, isUnique);
+    list = createLinkedList(&copyInt, &delInt, &compInt);
     
-    //First Insertion
+    //Insertion (append)
     for(i = 0; i < len; i++){
         opRes = appendLinkedList(list, (void*) &vals[i]);
         if(list->len != i+1 || !opRes)
             *testRes = 0;
     }
     
-    //Seond Insertion
+    //Search
     free(vals);
     vals = randList(len);
     for(i = 0; i < len; i++){
-        opRes = appendLinkedList(list, (void*) &vals[i]);
-        if(isUnique){
-            if(list->len != len || opRes)
-                *testRes = 0;
-        } else{
-            if(list->len != len + i + 1 || !opRes)
-                *testRes = 0;
-        }
+        searchRes = searchLinkedList(list, (void*) &vals[i]);
+        if(!searchRes)
+            *testRes = 0;
     }
     
-    //First Removal
+    //First removal
+    free(vals);
+    vals = randList(len);
     for(i = 0; i < len; i++){
-        opRes = removeLinkedList(list, (void*) &i);
-        if(isUnique){
-            if(list->len != len-i-1 || !opRes)
-                *testRes = 0;
-        } else{
-            if(list->len != 2*(len-i-1) || !opRes)
-                *testRes = 0;
+        opRes = removeLinkedList(list, (void*) &vals[i]);
+        if(!opRes){
+            *testRes = 0;
         }
+        searchRes = searchLinkedList(list, (void*) &vals[i]);
+        if(searchRes)
+            *testRes = 0;
     }
     
     //Second Removal
+    free(vals);
+    vals = randList(len);
     for(i = 0; i < len; i++){
-        opRes = removeLinkedList(list, (void*) &i);
-        if(list->len != 0 || opRes)
+        opRes = removeLinkedList(list, (void*) &vals[i]);
+        if(opRes){
+            *testRes = 0;
+        }
+        searchRes = searchLinkedList(list, (void*) &vals[i]);
+        if(searchRes)
             *testRes = 0;
     }
 
@@ -61,17 +64,11 @@ int linkedListTest(int repeat_cnt, int len){
     
     for(i = 0; i < repeat_cnt; i++){
         testRes = 0;
-        insertRemoveTestLinkedList(len, 1, &testRes);
+        insertRemoveTestLinkedList(len, &testRes);
         if(testRes)
-            printf("UNIQUE MODE SUCCESS.\n");
+            printf("TRIAL:%d LINKED LIST TEST SUCCESS.\n",i);
         else
-            printf("UNIQUE MODE FAILURE.\n");
-        
-        insertRemoveTestLinkedList(len, 0, &testRes);
-        if(testRes)
-            printf("NON-UNIQUE MODE SUCCESS.\n");
-        else
-            printf("NON-UNIQUE MODE FAILURE.\n");
+            printf("TRIAL:%d LINKED LIST TEST FAILURE.\n",i);
     }
     
     return 0;
