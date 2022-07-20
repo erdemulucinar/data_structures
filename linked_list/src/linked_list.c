@@ -164,8 +164,9 @@ void printLinkedList(LinkedList *list, printFunction print){
     currNode = list->head;
     while(currNode){
         print(currNode->key);
-        printf(" ");
         currNode = currNode->next;
     }
-    printf("\n");
+    
+    if(list->head)
+        printf("\n");
 }
