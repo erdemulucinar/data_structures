@@ -42,6 +42,8 @@ LinkedList* createLinkedList(copyFunction copy, deleteFunction del, compareFunct
 int pushLinkedList(LinkedList *list, void *key);
 //Insertion function to the end of the list
 int appendLinkedList(LinkedList *list, void *key);
+//Pop function to use the linked list as FIFO or LIFO
+void* popLinkedList(LinkedList *list);
 //Removal function
 int removeLinkedList(LinkedList *list, void *key);
 //Search function

@@ -63,6 +63,24 @@ int appendLinkedList(LinkedList *list, void *key){
     return 1;
 }
 
+void* popLinkedList(LinkedList *list){
+    LinkedListNode *tmp;
+    void *data;
+    
+    //Null or empty list check
+    if(!list || !list->len){
+        return 0;
+    }
+    
+    tmp = list->head;
+    data = tmp->key;
+    list->head = list->head->next;
+    free(tmp);
+    list->len = list->len - 1;
+    
+    return data;
+}
+
 int removeLinkedList(LinkedList *list, void *key){
     LinkedListNode **currNode, *tmp;
     int compRes;
