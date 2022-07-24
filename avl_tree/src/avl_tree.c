@@ -335,6 +335,34 @@ void listAVL(AVLTree *tree, void **list){
     sortList(tree->head, &i, list);
 }
 
+void* mergeAVL(AVLTree *dest, AVLTree *src, int overwrite){
+    void **dataSrc, *conflict;
+    int i;
+    
+    //Collect data in an array for direct access.
+    dataSrc = malloc(src->len * sizeof(void*));
+    listAVL(src, dataSrc);
+    
+    //Search the destination for all the elements in source to check for any
+    //duplicates.
+    conflict = 0;
+    for(i = 0; i < src->len; i++){
+        if(searchAVL(dest, dataSrc[i])){
+            conflict = dataSrc[i];
+            free(dataSrc);
+            return conflict;
+        }
+    }
+    
+    //Insert all the elements of the src to dest.
+    for(i = 0; i < src->len; i++){
+        insertAVL(dest, dataSrc[i]);
+    }
+    
+    free(dataSrc);
+    return 0;
+}
+
 //Debug Functions
 
 void printAVL(AVLTree *tree, printFunction print){

@@ -49,6 +49,11 @@ void* searchAVL(AVLTree *tree, void *key);
 void flushAVL(AVLTree *tree);
 //A function to list the keys of the tree in an array.
 void listAVL(AVLTree *tree, void **list);
+//A function to add elements of one tree to another. First the elements of src are
+//searched in dest. If there is a duplicate, whole operation is cancelled and the
+//conflicting element's key is returned. When there are no matches, trees are
+//merged.
+void* mergeAVL(AVLTree *dest, AVLTree *src);
 
 //Debug functions
 //  Prints the whole tree, with the head node having 0 tabs before, and i'th level nodes
