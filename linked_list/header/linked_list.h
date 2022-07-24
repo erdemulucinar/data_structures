@@ -52,6 +52,8 @@ void* searchLinkedList(LinkedList *list, void *key);
 void flushLinkedList(LinkedList *list);
 //A function to copy all the contents of a linked list
 LinkedList* copyLinkedList(LinkedList *list);
+//A function to append a linked list to another
+void mergeLinkedList(LinkedList *dest, LinkedList *src);
 
 //Debug functions
 void printLinkedList(LinkedList *list, printFunction print);

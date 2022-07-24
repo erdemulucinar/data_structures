@@ -175,6 +175,17 @@ LinkedList* copyLinkedList(LinkedList *list){
     return newList;
 }
 
+void mergeLinkedList(LinkedList *dest, LinkedList *src){
+    int i;
+    void *tmp;
+    
+    for(i = 0; i < src->len; i++){
+        tmp = popLinkedList(src);
+        appendLinkedList(dest, tmp);
+        appendLinkedList(src, tmp);
+    }
+}
+
 //Debug functions
 void printLinkedList(LinkedList *list, printFunction print){
     LinkedListNode *currNode;
