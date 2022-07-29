@@ -335,7 +335,7 @@ void listAVL(AVLTree *tree, void **list){
     sortList(tree->head, &i, list);
 }
 
-void* mergeAVL(AVLTree *dest, AVLTree *src, int overwrite){
+void* mergeAVL(AVLTree *dest, AVLTree *src){
     void **dataSrc, *conflict;
     int i;
     
